@@ -351,4 +351,184 @@ Resultado:
 
 ![image](https://github.com/user-attachments/assets/a9e3d522-ec66-4e80-b0fd-7f53cdcef174)
 
+Video complementario: <https://www.youtube.com/watch?v=6A_xKy1qANw&t=83s&ab_channel=MCIElectronics>
+
+
+# **Pantallas tipo display**
+
+![image](https://github.com/user-attachments/assets/b0c3aa65-4e78-41e7-8fc0-bd5783624055)
+
+Tipos comunes de pantallas display
+
+LCDs (Liquid Crystal Display):
+
+LCD 16x2 o 20x4: Son las más populares en proyectos Arduino. Muestran texto en filas y columnas.
+
+  - Pantalla OLED: Máxima resolución en tamaño compacto, muestran gráficos, textos y animaciones en color o blanco y negro.
+  - Pantallas TFT: Permiten gráficos, colores y pantallas táctiles, ofreciendo interfaces similares a los smartphones.
+
+LED Matrices: Como las controladas por MAX7219, que permiten crear patrones, textos desplazantes, imágenes simples y efectos visuales en una cuadrícula de LEDs.
+
+Pantallas táctiles: Como las TFT táctiles o las pantallas ILI9341, que además de mostrar información, permiten la interacción mediante toque.
+
+LED de 7 segmentos: Compuestas por 7 LEDs en forma de dígito, útiles para mostrar números simples, como en relojes o contadores.
+
+
+Codigo para display de 7 segmentos:
+
+```cpp
+int a=7; 
+int b=6; 
+int c=5; 
+int d=11; 
+int e=10; 
+int  f=8; 
+int g=9; 
+int dp=4; 
+//display number 1
+void display1(void) 
+{  
+    digitalWrite(b,HIGH);
+    digitalWrite(c,HIGH);
+} 
+//display number2
+void  display2(void) 
+{
+    digitalWrite(a,HIGH);
+    digitalWrite(b,HIGH);
+    digitalWrite(g,HIGH);
+  digitalWrite(e,HIGH);
+    digitalWrite(d,HIGH);
+}  
+// display number3
+void display3(void) 
+{ 
+    digitalWrite(a,HIGH);
+    digitalWrite(b,HIGH);
+    
+  digitalWrite(c,HIGH);
+    digitalWrite(d,HIGH);
+    digitalWrite(g,HIGH);
+} 
+// display number4
+void display4(void) 
+{  
+    digitalWrite(f,HIGH);
+    digitalWrite(b,HIGH);
+    digitalWrite(g,HIGH);
+  digitalWrite(c,HIGH);
+  
+} 
+// display number5
+void display5(void)  
+{ 
+    digitalWrite(a,HIGH);
+    digitalWrite(f,HIGH);
+    digitalWrite(g,HIGH);
+  digitalWrite(c,HIGH);
+    digitalWrite(d,HIGH);
+} 
+// display number6
+void  display6(void) 
+{ 
+    digitalWrite(a,HIGH);
+    digitalWrite(f,HIGH);
+    digitalWrite(g,HIGH);
+  digitalWrite(c,HIGH);
+    digitalWrite(d,HIGH);  
+    digitalWrite(e,HIGH);  
+} 
+// display number7
+void display7(void)  
+{   
+   digitalWrite(a,HIGH);
+    digitalWrite(b,HIGH);
+    digitalWrite(c,HIGH);
+}  
+// display number8
+void display8(void) 
+{ 
+    digitalWrite(a,HIGH);
+    digitalWrite(b,HIGH);
+    digitalWrite(g,HIGH);
+  digitalWrite(c,HIGH);
+    digitalWrite(d,HIGH);  
+    digitalWrite(e,HIGH);  
+  digitalWrite(f,HIGH);  
+} 
+void clearDisplay(void) 
+{ 
+    digitalWrite(a,LOW);
+    digitalWrite(b,LOW);
+    digitalWrite(g,LOW);
+  digitalWrite(c,LOW);
+    digitalWrite(d,LOW);  
+    digitalWrite(e,LOW);  
+  digitalWrite(f,LOW);  
+} 
+void display9(void)  
+{ 
+    digitalWrite(a,HIGH);
+    digitalWrite(b,HIGH);
+    digitalWrite(g,HIGH);
+  digitalWrite(c,HIGH);
+    digitalWrite(d,HIGH);  
+  digitalWrite(f,HIGH);  
+} 
+void display0(void) 
+{ 
+    digitalWrite(a,HIGH);
+    digitalWrite(b,HIGH);
+  digitalWrite(c,HIGH);
+    digitalWrite(d,HIGH);  
+    digitalWrite(e,HIGH);  
+  digitalWrite(f,HIGH);  
+} 
+void setup() 
+{ 
+    int i;
+    for(i=4;i<=11;i++)  
+        pinMode(i,OUTPUT);
+} 
+void loop() 
+{     
+    while(1) 
+    {   clearDisplay();
+  display0(); 
+        delay(2000); 
+        clearDisplay();
+        display1(); 
+        delay(2000); 
+        clearDisplay();
+        display2();  
+        delay(2000); 
+        clearDisplay();
+        display3(); 
+        delay(2000);
+        clearDisplay();
+        display4(); 
+        delay(2000);
+        clearDisplay(); 
+        display5(); 
+        delay(2000);
+        clearDisplay();  
+        display6(); 
+        delay(2000);
+        clearDisplay(); 
+        display7(); 
+        delay(2000); 
+        clearDisplay();
+        display8();  
+        delay(2000); 
+        clearDisplay();  
+        display9(); 
+        delay(2000);      
+    }
+}
+```
+
+![image](https://github.com/user-attachments/assets/97b361e3-67ae-4d62-98b5-fa6c76b4d8ca)
+
+
+**Pantalla LCD 16x2**
 
