@@ -303,4 +303,52 @@ void loop() {
 
 # **Matrices LED**
 
-El Arduino R4 incluye una matriz LED 12x8 incorporada
+Una matriz de LED es un dispositivo compuesto por múltiples LEDs organizados en filas y columnas. Este arreglo permite crear pantallas, indicadores o displays alfanuméricos de tamaño compacto. La matriz puede ser de diferentes dimensiones, por ejemplo, 8x8, 16x8, entre otras.
+
+![image](https://github.com/user-attachments/assets/5e2ae236-42f6-4f5d-a4d4-c6a046e31017)
+
+Hasta ahora, las placas Arduino no traen una matriz de LED incorporada como parte estándar del hardware en los pines. Sin embargo, la Arduino Uno R4 trae algunas novedades en hardware y facilita conectividades que permiten el uso de matrices de LED:
+
+**Integración de interfaz I2C:**
+
+La placa cuenta con más pines y capacidad para integrar fácilmente pantallas de matriz de LED de 16x2, 8x8, o incluso pantallas OLED, a través del bus I2C, que requiere solo dos líneas (SDA y SCL). Esto simplifica la conexión y control de matrices grandes sin usar muchos pines.
+
+**Módulo de control digital mejorado:**
+
+La Uno R4 puede conectarse con controladores dedicados para matrices LED, como los driver IC tipo MAX7219 o HT16K33, que permiten manejar matrices de 8x8 o mayores mediante comunicación I2C o SPI, liberando pines y facilitando programación.
+
+**Facilidades para aplicaciones visuales en proyectos:**
+
+Gracias a sus nuevos pines y compatibilidades, el control de matrices de LED y pantallas gráficas es más sencillo, permitiendo concentrarse en el diseño y programación en lugar de en la interacción física con los componentes.
+
+Link arduino: <https://docs.arduino.cc/hardware/uno-r4-wifi/>
+
+
+```cpp
+#include "Arduino_LED_Matrix.h"
+ArduinoLEDMatrix matriz;
+byte dibujo[8][12] = {
+ { 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1 },
+ { 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1 },
+ { 1, 0, 1, 1, 1, 1, 1, 1, 1, 1, 0, 1 },
+ { 1, 0, 1, 0, 0, 0, 0, 0, 0, 1, 0, 1 },
+ { 1, 0, 1, 0, 0, 0, 0, 0, 0, 1, 0, 1 },
+ { 1, 0, 1, 1, 1, 1, 1, 1, 1, 1, 0, 1 },
+ { 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1 },
+ { 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1 }
+};
+
+void setup() {
+ matriz.begin();
+}
+void loop() {
+ matriz.renderBitmap(dibujo, 8, 12);
+}
+
+```
+
+Resultado:
+
+![image](https://github.com/user-attachments/assets/a9e3d522-ec66-4e80-b0fd-7f53cdcef174)
+
+
