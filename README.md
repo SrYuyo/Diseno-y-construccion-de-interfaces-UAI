@@ -1033,8 +1033,59 @@ Un módulo microSD es un dispositivo que permite leer y escribir datos en una ta
 |MOSI|Pin 11|
 |MISO|Pin12|
 
+Se requiere la librería SPI.h para la comunicación y la librería SD.h para las acciones de lectura y escritura. Se debe definir el pin CS como variable. Los otros pines SPI son fijos.
+
+![image](https://github.com/user-attachments/assets/8c55ee0e-f4a8-49e2-8777-ffccc9c5936f)
+
+```cpp
+#include <SPI.h>
+#include <SD.h>
+
+const int chipSelect = 10;
+
+void setup() {
+  Serial.begin(9600);
+  if (!SD.begin(chipSelect)) {
+    Serial.println("Error al inicializar la tarjeta SD");
+    return;
+  }
+  Serial.println("Tarjeta SD inicializada.");
+
+  // Crear y escribir en un archivo
+  File dataFile = SD.open("datalog.txt", FILE_WRITE);
+  if (dataFile) {
+    dataFile.println("Hola, microSD!");
+    dataFile.close();
+    Serial.println("Archivo escrito");
+  } else {
+    Serial.println("No se pudo abrir el archivo");
+  }
+  
+  // Leer datos del archivo
+  dataFile = SD.open("datalog.txt");
+  if (dataFile) {
+    Serial.println("Contenido del archivo:");
+    while (dataFile.available()) {
+      Serial.write(dataFile.read());
+    }
+    dataFile.close();
+  } else {
+    Serial.println("No se pudo abrir el archivo");
+  }
+}
+
+void loop() {
+}
+```
+
+**RECORDAR FORMATEAR LA TARJETA ANTES DE UTILIZAR**
+
 <https://cursos.mcielectronics.cl/2023/07/03/modulo-de-tarjeta-micro-sd-de-interfaz-con-arduino/>
 <https://docs.arduino.cc/libraries/sd/>
 
+
+# **Protocolo UART**
+
+UART es un protocolo de comunicación serial asincróna, ampliamente utilizado para la transmisión de datos entre dispositivos, como Arduino, computadoras, módulos Bluetooth, GPS, entre otros. Es un método simple y efectivo para enviar datos en forma de bytes en serie, sin necesidad de una señal de reloj compartida.
 
 
