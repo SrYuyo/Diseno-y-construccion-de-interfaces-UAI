@@ -388,7 +388,7 @@ Pantallas táctiles: Como las TFT táctiles o las pantallas ILI9341, que además
 
 LED de 7 segmentos: Compuestas por 7 LEDs en forma de dígito, útiles para mostrar números simples, como en relojes o contadores.
 
-![image](https://github.com/user-attachments/assets/ef40f24a-5970-4a48-87c9-4856883317a0)
+![image](https://github.com/user-attachments/assets/d1e7cd12-f084-4b3b-8bc7-d42a7f95ffbb)
 
 ![image](https://github.com/user-attachments/assets/7393d6dc-4cba-4fe3-8f64-1b531ab2ce90)
 
@@ -773,6 +773,12 @@ Ventajas:
 
   - Soporta múltiples dispositivos en la misma línea, simplificando el diseño.
 
+Desventajas:
+
+  - Más lento en comparación con SPI.
+  - Más susceptible a interferencias en largas distancias.
+  - Requiere que cada dispositivo tenga una dirección única.
+
 ![image](https://github.com/user-attachments/assets/a6ad1cfa-04b1-4a4c-aafe-073c0a4b699c)
 
 **Biblioteca Wire**
@@ -879,16 +885,86 @@ La comunicación SPI (Serial Peripheral Interface) es un protocolo de comunicaci
 
 Características principales:
 
-Modo maestro/esclavo: La mayoría de los sistemas SPI operan con un dispositivo maestro (como un Arduino) que controla uno o varios dispositivos esclavos.
-Lineas de comunicación: Utiliza al menos cuatro líneas:
-MOSI (Master Out Slave In): Datos enviados desde el maestro a los esclavos.
-MISO (Master In Slave Out): Datos enviados desde los esclavos al maestro.
-SCLK (Serial Clock): El reloj generado por el maestro para sincronizar la transferencia.
-SS/CS (Slave Select o Chip Select): Línea activa baja que selecciona el dispositivo esclavo con el que se comunica.
-Velocidad: Puede trabajar a altas velocidades, típicamente desde algunos kbps hasta varios Mbps.
-Framework en Arduino: La biblioteca SPI facilita la integración con dispositivos SPI
+  - Modo maestro/esclavo: La mayoría de los sistemas SPI operan con un dispositivo maestro (como un Arduino) que controla uno o varios dispositivos esclavos.
+  - Lineas de comunicación: Utiliza al menos cuatro líneas:
+  - MOSI (Master Out Slave In): Datos enviados desde el maestro a los esclavos.
+  - MISO (Master In Slave Out): Datos enviados desde los esclavos al maestro.
+  - SCLK (Serial Clock): El reloj generado por el maestro para sincronizar la transferencia.
+  - SS/CS (Slave Select o Chip Select): Línea activa baja que selecciona el dispositivo esclavo con el que se comunica.
+  - Velocidad: Puede trabajar a altas velocidades, típicamente desde algunos kbps hasta varios Mbps.
+  - Framework en Arduino: La biblioteca SPI facilita la integración con dispositivos SPI
 
 El maestro genera un reloj SCLK. Cuando el maestro activa el pin CS del dispositivo escogido, comienza la transferencia. Los datos se intercambian bit por bit en sincronía con el reloj, en serie. La comunicación continúa hasta que se completa la transferencia, tras lo cual el maestro desactiva el CS.
 
 ![image](https://github.com/user-attachments/assets/2607dcab-d972-440e-8da4-3ba3e49adb11)
+
+Ahora entrando más en detalle en su funcionamiento se compone de 3 ejes principales:
+
+  - **Inicio de comunicación:** El maestro selecciona el dispositivo esclavo deseado poniendo en bajo la línea SS del dispositivo.
+  - **Transferencia de datos:** El maestro genera el reloj SCK. Con cada ciclo, se envía y recibe un bit mediante las líneas MOSI y MISO, simultáneamente.
+  - **Finalización:** Cuando se termina la transferencia, el maestro libera la línea SS, finalizando la comunicación con ese dispositivo.
+
+
+**Ventajas**
+
+Alta velocidad de transmisión. Comunicación full-duplex (simultáneo envío y recepción de datos). Configurable en modo (polaridad y fase). Soporta múltiples dispositivos (mediante líneas SS dedicadas).
+
+**Desventajas**
+
+Requiere más líneas que otros protocolos como I2C. La gestión de líneas SS puede complicarse en sistemas con muchos dispositivos.
+
+
+Codigo para el maestro:
+
+```cpp
+#include <SPI.h>
+
+void setup() {
+  // Inicializa la comunicación SPI
+  SPI.begin();
+  // Configura la línea SS como salida
+  pinMode(10, OUTPUT);
+  digitalWrite(10, HIGH); // Inicialmente desactivado
+}
+
+void loop() {
+  // Inicia la comunicación con el esclavo
+  digitalWrite(10, LOW); // Selecciona el esclavo
+  byte dataToSend = 0x55; // Datos a enviar
+  byte receivedData = SPI.transfer(dataToSend); // Envía y recibe datos
+  digitalWrite(10, HIGH); // Deselecciona el esclavo
+  
+}
+```
+
+Codigo para esclavo:
+
+```cpp
+#include <SPI.h>
+
+// Variable para almacenar datos recibidos
+volatile byte receivedByte = 0;
+
+void setup() {
+  // Configurar el pin de esclavo SPI (por defecto en Arduino UNO es pin 10)
+  pinMode(MISO, OUTPUT); // Necesario como esclavo
+  // Inicializa SPI en modo esclavo
+  SPCR |= _BV(SPE);
+  
+  // Habilitar interrupciones para SPI
+  SPI.attachInterrupt();
+}
+
+ISR(SPI_STC_vect) { // Interrupción SPI: se ejecuta cuando se recibe un byte
+  receivedByte = SPDR; // Leer el dato recibido
+  // Aquí puedes procesar receivedByte si lo deseas
+  // Por ejemplo, cargar un dato en SPDR para enviar en la próxima transferencia:
+  SPDR = 0xAB; // Enviamos un byte de ejemplo en respuesta
+}
+
+void loop() {
+  // En modo esclavo no es necesario poner nada en loop
+  // Todo el manejo se realiza en la interrupción
+}
+```
 
