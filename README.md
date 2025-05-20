@@ -1,8 +1,23 @@
 # Diseño y construcción de interfaces UAI
 
+Recomendaciones de blibliografía:
+
+• The design of everyday things, Don
+Norman
+
+• Exploring Arduino, Jeremy Blum
+
+• Mastering the Arduino Uno R4, Dongan Ibrahim
+
+• Don’t Make me think 3rd edition, Steve Krug 
+
+• Beginner's Guide to Reading
+
+• Schematics, Stan Gibilisco
+
 Ramo de la UAI, en el repositorio se encontrata una profundización de arduino. Además, con este repositorio es posible preparse para la cerfificación de arduino. Cabe destacar que el repositorio utiliza placas UNO R3 y UNO R4 de Arduino.
 
-Link electronica básica: <Agregar_link>
+Link electronica básica: <https://github.com/SrYuyo/Electronica-aplicada-UAI>
 
 Una interfaz es un punto de interacción o conexión entre dos o más sistemas, dispositivos o componentes. En el contexto de la computación y la programación, puede referirse a:
 
@@ -373,6 +388,21 @@ Pantallas táctiles: Como las TFT táctiles o las pantallas ILI9341, que además
 
 LED de 7 segmentos: Compuestas por 7 LEDs en forma de dígito, útiles para mostrar números simples, como en relojes o contadores.
 
+![image](https://github.com/user-attachments/assets/ef40f24a-5970-4a48-87c9-4856883317a0)
+
+![image](https://github.com/user-attachments/assets/7393d6dc-4cba-4fe3-8f64-1b531ab2ce90)
+
+Cabe destacar que existen diferenciacion entre este componente. Se dividen en anodo y catodo común.
+
+![image](https://github.com/user-attachments/assets/ae257d17-3445-449e-b6a3-32e55f80b967)
+
+Dado que todas las conexiones de ánodo de los LEDs están unidas juntas al VCC, esto significa que su estado regular es uno HIGH. Y los LEDs individuales se iluminan conectando el lado el cátodo individual a una señal LOW (0V). Así que enviamos baja para encender cada LED.
+
+![image](https://github.com/user-attachments/assets/3fe964af-8d95-4e12-a997-e8e7b0fa944d)
+
+Para el cátodo común, todos los LEDs tienen tierra (GND) común. Conocer las diferencias entre los dos tipos ayuda tanto en el cableado como en la programación. Para el cátodo común, el in común se conecta a tierra. Y nuevamente, dado que todas las conexiones de los cátodo de los LEDs están unidas a tierra, significa que su lógica es cero LOW. Así que para iluminar los LEDs hay que conectar el terminal de ánodo a una señal alta (5V).
+
+Recuerda limitar la corriente para no quemar el segmento del display por lo que debes utilizar resistencias de 220 ohm.
 
 Codigo para display de 7 segmentos:
 
@@ -382,16 +412,16 @@ int b=6;
 int c=5; 
 int d=11; 
 int e=10; 
-int  f=8; 
+int f=8; 
 int g=9; 
 int dp=4; 
-//display number 1
+
 void display1(void) 
 {  
     digitalWrite(b,HIGH);
     digitalWrite(c,HIGH);
 } 
-//display number2
+
 void  display2(void) 
 {
     digitalWrite(a,HIGH);
@@ -400,7 +430,7 @@ void  display2(void)
   digitalWrite(e,HIGH);
     digitalWrite(d,HIGH);
 }  
-// display number3
+
 void display3(void) 
 { 
     digitalWrite(a,HIGH);
@@ -410,7 +440,7 @@ void display3(void)
     digitalWrite(d,HIGH);
     digitalWrite(g,HIGH);
 } 
-// display number4
+
 void display4(void) 
 {  
     digitalWrite(f,HIGH);
@@ -419,7 +449,7 @@ void display4(void)
   digitalWrite(c,HIGH);
   
 } 
-// display number5
+
 void display5(void)  
 { 
     digitalWrite(a,HIGH);
@@ -428,7 +458,7 @@ void display5(void)
   digitalWrite(c,HIGH);
     digitalWrite(d,HIGH);
 } 
-// display number6
+
 void  display6(void) 
 { 
     digitalWrite(a,HIGH);
@@ -438,14 +468,14 @@ void  display6(void)
     digitalWrite(d,HIGH);  
     digitalWrite(e,HIGH);  
 } 
-// display number7
+
 void display7(void)  
 {   
    digitalWrite(a,HIGH);
     digitalWrite(b,HIGH);
     digitalWrite(c,HIGH);
 }  
-// display number8
+
 void display8(void) 
 { 
     digitalWrite(a,HIGH);
@@ -531,4 +561,334 @@ void loop()
 
 
 **Pantalla LCD 16x2**
+
+
+Las pantallas LCD de 16x2 en Arduino son dispositivos de salida que permiten mostrar texto y datos de manera sencilla y eficiente. Estas pantallas tienen 16 caracteres por fila y 2 filas, lo que facilita presentar información clara y concisa en proyectos de electrónica y automatización. Las pantallas de cristal líquido se organizan como una matriz de caracteres, usualmente de 5 x 8 puntos (o píxeles).
+
+![image](https://github.com/user-attachments/assets/11f7ea34-019f-4630-8fc3-b262dccfd4fa)
+
+Los pines de alimentación se conectan a 5V y GND
+
+• El pin VEE (o VO en TinkerCAD) se usa para regular el contraste: se recomienda conectar un potenciómetro.
+
+• Los pines de datos se conectan a pines digitales.
+
+• Los pines del backlight se conectan a 5V y GND. También se puede usar una fuente externa.
+
+• En el código se deben identificar muy claramente los pines digitales utilizados.
+
+![image](https://github.com/user-attachments/assets/f81216e4-11b1-4b92-913a-bdbdf4a1f8fc)
+
+El segundo tipo común es el LCD gráfico. El dispositivo LCD gráfico utiliza una única cuadrícula grande de luces individuales para mostrar información, en lugar de una cuadrícula separada para cada carácter. La disposición gráfica más común es el LCD de 128 por 64. La ventaja de usar esa disposición es que puedes mostrar cualquier carácter en la resolución que prefieras, y no estás limitado solo a la resolución de cinco por ocho en el dispositivo alfanumérico.
+
+
+La mayoría de los LCDs que son compatibles con Arduino usan el controlador HD para gestionar el LCD. El HD44780, es conocido como controlador y driver de pantalla de cristal líquido de matriz de puntos. Cada matriz de puntos dentro del LCD tiene cinco columnas y ocho filas, como puedes ver en la imagen. Cada una de las matrices de puntos dentro de los 16 caracteres tiene una matriz de cinco por ocho. Esto se utiliza para mostrar letras y números cuando se usa el LCD.
+
+<https://cdn.sparkfun.com/assets/9/5/f/7/b/HD44780.pdf>
+
+Ejmplo de código:
+
+```cpp
+#include <LiquidCrystal.h>
+
+// Configuración de pines: rs, enable, d4, d5, d6, d7
+LiquidCrystal lcd(12, 11, 5, 4, 3, 2);
+
+void setup() {
+  lcd.begin(16, 2);
+  lcd.print("Hola Mundo!");
+}
+
+void loop() {
+
+}
+```
+
+**Librería LiquidCrystal**
+
+Hay algunas funciones útiles que puede usar con objetos LiquidCrystal. Algunos de ellos se enumeran a continuación:
+
+lcd.home() se utiliza para colocar el cursor en la parte superior izquierda de la pantalla LCD sin borrar la pantalla.
+
+lcd.blink(), muestra un bloque parpadeante de 5×8 píxeles en la posición en la que se escribirá el siguiente carácter. 
+
+lcd.cursor() muestra un guión bajo (línea) en la posición en la que se escribirá el siguiente carácter.
+
+lcd.noBlink() apaga el cursor LCD parpadeante.
+
+lcd.noCursor() oculta el cursor LCD.
+
+lcd.scrollDisplayRight() desplaza el contenido de la pantalla un espacio hacia la derecha. Si deseas que el texto se desplace continuamente, debes usar esta función dentro de un bucle for.
+
+lcd.scrollDisplayLeft() desplaza el contenido de la pantalla un espacio hacia la izquierda. Similar a la función anterior, usa esto dentro de un ciclo for para desplazamiento continuo.
+
+clear(): Este método se utiliza para borrar el contenido del display LCD. Por ejemplo: lcd.clear(); En este ejemplo, se llama al método clear() para borrar el contenido del display LCD.
+
+print(): Este método se utiliza para imprimir texto en el display LCD. Por ejemplo: lcd.print("Hello, world!"); En este ejemplo, se llama al método print() para imprimir el texto "Hello, world!" en el display LCD.
+
+setCursor(col, row): Este método se utiliza para establecer la posición del cursor en el display LCD. Por ejemplo: lcd.setCursor(0, 1); En este ejemplo, se llama al método setCursor() para establecer la posición del cursor en la primera columna de la segunda fila del display LCD.
+
+<https://docs.arduino.cc/libraries/liquidcrystal/>
+
+![image](https://github.com/user-attachments/assets/06f809b1-c3f0-423b-a517-59d6ce2be712)
+
+
+```cpp
+
+#include <LiquidCrystal.h>
+
+const int rs = 12, en = 11, d4 = 5, d5 = 4, d6 = 3, d7 = 2;
+LiquidCrystal lcd(rs, en, d4, d5, d6, d7);
+
+byte heart[8] = {
+  0b00000,
+  0b01010,
+  0b11111,
+  0b11111,
+  0b11111,
+  0b01110,
+  0b00100,
+  0b00000
+};
+
+byte smiley[8] = {
+  0b00000,
+  0b00000,
+  0b01010,
+  0b00000,
+  0b00000,
+  0b10001,
+  0b01110,
+  0b00000
+};
+
+byte frownie[8] = {
+  0b00000,
+  0b00000,
+  0b01010,
+  0b00000,
+  0b00000,
+  0b00000,
+  0b01110,
+  0b10001
+};
+
+byte armsDown[8] = {
+  0b00100,
+  0b01010,
+  0b00100,
+  0b00100,
+  0b01110,
+  0b10101,
+  0b00100,
+  0b01010
+};
+
+byte armsUp[8] = {
+  0b00100,
+  0b01010,
+  0b00100,
+  0b10101,
+  0b01110,
+  0b00100,
+  0b00100,
+  0b01010
+};
+
+void setup() {
+  lcd.begin(16, 2);
+
+  lcd.createChar(0, heart);
+  lcd.createChar(1, smiley);
+  lcd.createChar(2, frownie);
+  lcd.createChar(3, armsDown);
+  lcd.createChar(4, armsUp);
+
+  lcd.setCursor(0, 0);
+
+  lcd.print("I ");
+  lcd.write(byte(0)); 
+  lcd.print(" Arduino");
+  lcd.write((byte)1);
+
+}
+
+void loop() {
+
+  int sensorReading = analogRead(A0);
+
+  int delayTime = map(sensorReading, 0, 1023, 200, 1000);
+  lcd.setCursor(4, 1);
+  lcd.write(3);
+  delay(delayTime);
+  lcd.setCursor(4, 1);
+  lcd.write(4);
+  delay(delayTime);
+}
+```
+
+En los siguientes links podrás personalizar caracteres:
+
+<https://chareditor.com/>
+
+<https://maxpromer.github.io/LCD-Character-Creator/>
+
+# **Comunicación I2C**
+
+El protocolo I2C (Inter-Integrated Circuit) es un estándar de comunicación serial que permite la conexión de múltiples dispositivos en una misma línea de datos, facilitando la comunicación entre sensores, pantallas, microcontroladores y otros componentes electrónicos en proyectos electrónicos y de automatización.
+
+Características principales:
+
+  - Conexión multicapa: Utiliza solo dos líneas principales: SDA (data) y SCL ( reloj).
+
+  - Multimaster y esclavos: Permite que varios dispositivos puedan actuar como maestros o esclavos en la misma línea, aunque en la mayoría de los casos, uno actúa como maestro.
+
+  - Direcciones: Cada dispositivo en la red I2C tiene una dirección única, lo que permite comunicar con uno específico en medio de varios dispositivos compartiendo línea.
+ 
+  - Velocidad: Trabaja típicamente a velocidades de 100 kbps (modo estándar), 400 kbps (modo rápido) o más en modos avanzados.
+
+  - Facilidad de conexión: Solo requiere dos cables principales, además de tierra y alimentación, simplificando el cableado.
+
+
+Funcionamiento básico:
+
+  - El maestro inicia la comunicación enviando la dirección del dispositivo destino, y después realiza la transferencia de datos en bits, sincronizados por el reloj SCL.
+
+  - La comunicación se realiza en frames (marcos) que incluyen la dirección y los datos, garantizando una transferencia sincronizada y controlada.
+
+Aplicaciones:
+
+
+  - Conexión de sensores y módulos de medición (temperatura, presión, humedad).
+
+  - Pantallas LCD, RTCs (relojes en tiempo real) y memorias EEPROM.
+
+  - Comunicación entre microcontroladores en sistemas complejos.
+
+Ventajas:
+
+  - Reduce el número de cables necesarios para múltiples dispositivos.
+    
+  - Facilita la expansión y montaje en diferentes proyectos.
+
+  - Soporta múltiples dispositivos en la misma línea, simplificando el diseño.
+
+![image](https://github.com/user-attachments/assets/a6ad1cfa-04b1-4a4c-aafe-073c0a4b699c)
+
+**Biblioteca Wire**
+
+La biblioteca Wire en Arduino es una biblioteca estándar que facilita la comunicación mediante el protocolo I2C. Permite que uno o varios dispositivos intercambien datos de manera sencilla a través de solo dos líneas de comunicación: SDA (datos) y SCL (reloj).
+
+<https://docs.arduino.cc/language-reference/en/functions/communication/wire/>
+
+Codigo de ejemplo para maestro:
+
+```cpp
+#include <Wire.h>
+
+void setup() {
+  Wire.begin(); // inicia como maestro
+  Serial.begin(9600);
+}
+
+void loop() {
+  Wire.requestFrom(0x68, 6); // solicita 6 bytes del módulo en dirección 0x68
+  while (Wire.available()) {
+    int data = Wire.read(); // lee los datos
+    Serial.println(data);
+  }
+  delay(1000);
+}
+```
+
+Codigo para esclavo:
+
+```cpp
+#include <Wire.h>
+
+const int slaveAddress = 0x08;  // Dirección del dispositivo esclavo
+
+void setup() {
+  Wire.begin(slaveAddress);    // Iniciar como esclavo en la dirección 0x08
+  Wire.onRequest(requestEvent); // Registrar función para solicitar datos
+  Wire.onReceive(receiveEvent); // Registrar función para recibir datos
+  Serial.begin(9600);
+}
+
+void loop() {
+  // El loop puede estar vacío o realizar otras tareas
+}
+
+// Esta función se llama cuando el maestro solicita datos
+void requestEvent() {
+  int dato = 1; // Ejemplo de dato a enviar
+  Wire.write(dato); // Envia el dato al maestro
+  Serial.println("Enviando dato al maestro");
+}
+
+// Esta función se llama cuando el esclavo recibe datos del maestro
+void receiveEvent(int howMany) {
+  while (Wire.available()) {
+    int recibido = Wire.read();
+    Serial.print("Dato recibido del maestro: ");
+    Serial.println(recibido);
+  }
+}
+```
+
+**Switch case**
+
+
+El condicional switch case es una estructura de control que permite ejecutar diferentes bloques de código según el valor de una variable. Es muy útil cuando se desea realizar diferentes acciones en función de múltiples valores específicos, en lugar de múltiples instrucciones if-else.
+
+Características principales:
+
+  - Es más limpio y legible que múltiples if-else cuando hay varias condiciones distintas.
+  - La variable evaluada puede ser de tipos enteros, caracteres o enumeraciones.
+  - Utiliza case para cada condición específica y default para un caso que se ejecuta si ninguno de los casos coincide.
+
+Codigo de ejemplo:
+
+```cpp
+const int botonPin = 2;
+
+void setup() {
+  pinMode(botonPin, INPUT_PULLUP);
+  Serial.begin(9600);
+}
+
+void loop() {
+  int estadoBoton = digitalRead(botonPin);
+
+  switch (estadoBoton) {
+    case LOW:
+      Serial.println("Botón presionado");
+      break;
+    case HIGH:
+      Serial.println("Botón no presionado");
+      break;
+    default:
+      Serial.println("Estado desconocido");
+  }
+}
+```
+
+# **Comunicación SPI**
+
+La comunicación SPI (Serial Peripheral Interface) es un protocolo de comunicación serie muy utilizado en electrónica para conectar microcontroladores con dispositivos periféricos como sensores, memorias, pantallas, y otros módulos. Se caracteriza por su rapidez y simplicidad en comparación con otros protocolos.
+
+Características principales:
+
+Modo maestro/esclavo: La mayoría de los sistemas SPI operan con un dispositivo maestro (como un Arduino) que controla uno o varios dispositivos esclavos.
+Lineas de comunicación: Utiliza al menos cuatro líneas:
+MOSI (Master Out Slave In): Datos enviados desde el maestro a los esclavos.
+MISO (Master In Slave Out): Datos enviados desde los esclavos al maestro.
+SCLK (Serial Clock): El reloj generado por el maestro para sincronizar la transferencia.
+SS/CS (Slave Select o Chip Select): Línea activa baja que selecciona el dispositivo esclavo con el que se comunica.
+Velocidad: Puede trabajar a altas velocidades, típicamente desde algunos kbps hasta varios Mbps.
+Framework en Arduino: La biblioteca SPI facilita la integración con dispositivos SPI
+
+El maestro genera un reloj SCLK. Cuando el maestro activa el pin CS del dispositivo escogido, comienza la transferencia. Los datos se intercambian bit por bit en sincronía con el reloj, en serie. La comunicación continúa hasta que se completa la transferencia, tras lo cual el maestro desactiva el CS.
+
+![image](https://github.com/user-attachments/assets/2607dcab-d972-440e-8da4-3ba3e49adb11)
 
