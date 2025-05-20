@@ -970,5 +970,26 @@ void loop() {
 
 # **Memoria en Arduino**
 
+La memoria volátil es aquella que se elimina cuando se apaga el dispositivo. La memoria no volátil mantiene su contenido. La memoria RAM se utiliza para almacenar valores de variables durante la ejecución de un programa. La memoria Flash se utiliza para almacenar el código de un programa en la placa Arduino (u otro). La memoria EEPROM se utiliza para almacenar valores permanentes a largo plazo.
+
+
+![image](https://github.com/user-attachments/assets/3873b2ea-4ff6-4b3d-b1b3-4d1617b766d6)
+
+**Memoria EEPROM**
+
+EEPROM (Electrically Erasable Programmable Read-Only Memory) es una memoria no volátil que permite almacenar datos de manera permanente, incluso cuando el dispositivo está apagado. Es útil para guardar configuraciones, estados, o cualquier dato que necesite mantenerse entre reinicios.
+
+Dentro de las caracteristicas clave esta el conserva los datos sin alimentación, por lo que es no volátil. Se puede modificar los datos mediante comandos. En comparación a la memoria RAM es más lento, pero suficiente para almacenamiento de configuraciones. Además tiene un número limitado de ciclos de escritura, alrededor de 100,000 ciclos por celda, por lo que no se recomienda escribir repetidamente en bucles muy rápidos.
+
+Funciones principales:
+  - EEPROM.read(address): lee un byte en la posición de memoria especificada.
+  - EEPROM.write(address, value): escribe un byte en la posición especificada.
+  - EEPROM.put(address, data): escribe diferentes tipos de datos (structs, variables) en una sola operación.
+  - EEPROM.get(address, data): lee datos complejos.
+
+![image](https://github.com/user-attachments/assets/19db9c8d-08b9-48b2-860a-71c124c263e5)
+
+**Memoria externa**
+
 
 
