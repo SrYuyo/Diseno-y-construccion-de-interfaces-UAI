@@ -989,7 +989,52 @@ Funciones principales:
 
 ![image](https://github.com/user-attachments/assets/19db9c8d-08b9-48b2-860a-71c124c263e5)
 
+```cpp
+#include <EEPROM.h>
+
+void setup() {
+  Serial.begin(9600);
+  int address = 0;
+
+  // Escribir un valor en EEPROM
+  EEPROM.write(address, 42);
+  Serial.println("Valor escrito en EEPROM");
+}
+
+void loop() {
+  int address = 0;
+  byte valor = EEPROM.read(address);
+  Serial.print("Valor leído de EEPROM: ");
+  Serial.println(valor);
+  delay(2000);
+}
+```
+
+<https://docs.arduino.cc/learn/built-in-libraries/eeprom/>
+<https://docs.arduino.cc/learn/programming/eeprom-guide/>
+
+
 **Memoria externa**
+
+Memoria no volátil, de alta velocidad, que permite almancenar grandes cantidades de datos. Requiere módulos externos. Uno muy común funciona con protocolo SPI. La tarjeta debe tener formato FAT32
+
+Un módulo microSD es un dispositivo que permite leer y escribir datos en una tarjeta microSD, que funciona como medio de almacenamiento externo y portátil. Es ampliamente utilizado en proyectos Arduino para guardar datos, registrar sensores, firmware, imágenes, etc.
+
+![image](https://github.com/user-attachments/assets/3a4682af-ee13-4335-852b-cacbdd02034b)
+
+![image](https://github.com/user-attachments/assets/45abd61e-9176-4675-b01a-54daf05d4c04)
+
+| Modulo SD  | Arduino UNO |
+| ------------- | ------------- |
+| VCC  | 3.3V o 5V |
+| GND  | GND |
+|CS (Chip Select)|Pin 10 (o cualquier otro digital)| 
+|SCK|Pin 13|
+|MOSI|Pin 11|
+|MISO|Pin12|
+
+<https://cursos.mcielectronics.cl/2023/07/03/modulo-de-tarjeta-micro-sd-de-interfaz-con-arduino/>
+<https://docs.arduino.cc/libraries/sd/>
 
 
 
