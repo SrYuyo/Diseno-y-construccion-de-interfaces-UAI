@@ -1086,6 +1086,45 @@ void loop() {
 
 # **Protocolo UART**
 
-UART es un protocolo de comunicación serial asincróna, ampliamente utilizado para la transmisión de datos entre dispositivos, como Arduino, computadoras, módulos Bluetooth, GPS, entre otros. Es un método simple y efectivo para enviar datos en forma de bytes en serie, sin necesidad de una señal de reloj compartida.
+UART es un protocolo de comunicación serial asincróna, ampliamente utilizado para la transmisión de datos entre dispositivos, como Arduino, computadoras, módulos Bluetooth, GPS, entre otros. Es un método simple y efectivo para enviar datos en forma de bytes en serie, sin necesidad de una señal de reloj compartida. Respecto a arduino se deben alternan roles de transmisor (TX) y receptor (RX). Se deben acorda la velocidad de transmission, llamada Baud Rate. Se mide be bits por Segundo. Por último se puedes conectar dos placas Arduino diferente. 
 
+![image](https://github.com/user-attachments/assets/c9566af8-adc6-4915-91e8-6fd363aff823)
+
+**Librería Serial**
+
+![image](https://github.com/user-attachments/assets/333a58f1-5e74-4c99-88dc-dc1dcde50759)
+
+Ej practico:
+
+![image](https://github.com/user-attachments/assets/6ff8361e-b4f1-4042-8973-fcb7099cd692)
+
+RECORDAR PRIMERO CARGAR LOS CODIGOS POR SEPARADO Y LUEGO ENERGISAR Y CONECTAR PLACAS
+
+Codigo primera placa
+```cpp
+int recibido;
+void setup() {
+Serial1.begin(9600);
+pinMode(9, OUTPUT);
+}
+void loop() {
+if (Serial1.available()) {
+recibido = Serial1.parseInt();
+analogWrite(9, recibido);
+}
+```
+
+Codigo Segunda placa
+```cpp
+int valor;
+int brillo;
+void setup() {
+Serial1.begin(9600);
+void loop() {
+valor = analogRead(A0);
+brillo = map (valor, 0, 1023, 0, 255);
+Serial1.println(brillo);
+delay(100);
+}
+```
 
