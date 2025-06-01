@@ -1128,3 +1128,106 @@ delay(100);
 }
 ```
 
+**Comunicación con otros progamas**
+
+La conexión con software usando UART como vimos en Arduino, específicamente en el contexto de integrar con diferentes programas como Processing, Excel, Python y Grasshopper. Cada uno tiene diferentes métodos y herramientas para comunicarse con Arduino a través de UART (Universal Asynchronous Receiver-Transmitter), que es el método más común de comunicación serial.
+
+**La comunicación puede ser a diferentes velocidades de baudios (baud rate), como 9600, 115200, etc. Esto puede ser uno de los problemas de porque no funciona el código**
+
+Algunos ejemplos según programa:
+
+**Processig**
+
+Processing es una plataforma de programación para visualización y multimedia que puede conectarse en tiempo real con Arduino vía UART. En Processing, usas la librería Serial para abrir el puerto serie y leer/escribir datos.
+
+```java
+import processing.serial.*;
+
+Serial port;
+
+void setup() {
+  String portName = Serial.list()[0]; // Selecciona el puerto
+  port = new Serial(this, portName, 9600);
+}
+
+void draw() {
+  if (port.available() > 0) {
+    String datos = port.readStringUntil('\n');
+    println(datos);
+  }
+}
+```
+
+El codigo envia datos para visualizar en pantalla, controlar elementos gráficos, etc.
+
+
+**Excel**
+
+Excel puede comunicarse con Arduino usando Puertos COM mediante el complemento Power Query u otras herramientas como Plink en Windows o Serial Port Tool que lee serial y conecta con Excel. La forma más sencilla es usar un programa intermedio que pase los datos a Excel (por ejemplo, un script en Python que lea desde el puerto serie y guarde en un CSV o en una hoja de Excel en tiempo real).
+
+De todas formas ten en cuenta que si la base de datos es grande Excel no sea la herramienta más idonea.
+
+Referencias:
+
+  - <https://www.youtube.com/watch?v=cd_pDVVApak&pp=ygUSYXJkdWlubyB3aXRoIGV4Y2Vs>
+  - <https://www.youtube.com/watch?v=umBarmiCWEo&list=PLx1tajvUlOMeZNTfaRc1rt4nxgC46aMJJ>
+  - <https://projecthub.arduino.cc/m_karim02/arduino-to-excel-communication-adb318>
+  - <https://support.microsoft.com/es-es/office/ejecuci%C3%B3n-de-c%C3%B3digo-y-conexi%C3%B3n-a-un-microcontrolador-al-equipo-9428e1de-160f-4255-b887-741062b39317>
+
+
+**Python**
+
+Python es una de las opciones más flexibles y potentes para interactuar con Arduino vía UART usando la librería PySerial. Registrar datos, análisis en tiempo real, control remoto, integración con bases de datos, etc.
+
+```py
+import serial
+
+ser = serial.Serial('COM3', 9600)  # Cambia 'COM3' por tu puerto
+
+while True:
+    if ser.inWaiting() > 0:
+        data = ser.readline().decode('utf-8').strip()
+        print(data)
+```
+
+Referencias:
+
+  - <https://forum.arduino.cc/t/comunicacion-serial-python-arduino/1277800>
+  - <https://projecthub.arduino.cc/ansh2919/serial-communication-between-python-and-arduino-663756>
+  - <https://www.youtube.com/playlist?list=PLCYCyKTQZlD1t569SgejJL9G42KBKq0Y->
+
+
+**Conceptualización y diseño de algoritmos**
+
+La conceptualización y el diseño de algoritmos son pasos fundamentales en la programación y la resolución de problemas computacionales. Se realiza utilizando herramientas como seudocódigo y diagramas de flujo, los cuales ayudan a planificar y comunicar claramente cómo se debe realizar una tarea antes de implementarla en un lenguaje de programación.
+
+El seudocódigo es una representación textual sencilla y clara del algoritmo, que combina elementos del lenguaje natural con estructuras básicas de programación. Se usa para planificar la lógica sin preocuparse por la sintaxis específica de un lenguaje de programación.
+
+Por ejemplo:
+
+```txt
+Inicio
+    Leer número n
+    Si n es mayor que 0 Entonces
+        Escribir "Número positivo"
+    Sino
+        Escribir "Número no positivo"
+    FinSi
+Fin
+```
+
+El diagrama de flujo es una representación gráfica del algoritmo, usando símbolos estandarizados (como flechas, rombos, rectángulos) que muestran la secuencia y decisiones del proceso. Es útil para visualizar el orden de las acciones y las condiciones que afectan el flujo del programa.
+
+  - Un rectángulo: proceso o acción.
+  - Un rombo: decisión (sí/no).
+  - Flechas: indican la dirección del flujo.
+
+Una herramienta muy recomendable es Lucid. También existen otras como Miro y Canva.
+
+<https://www.lucidchart.com/pages/es/ejemplos/diagrama-de-flujo-online>
+
+![image](https://github.com/user-attachments/assets/3e5b0596-cc18-4d07-a7ab-197642c3f5cc)
+
+![image](https://github.com/user-attachments/assets/6c5b7a4b-ba96-45ca-8087-02d89f943d21)
+
+
