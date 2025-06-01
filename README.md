@@ -1226,8 +1226,186 @@ Una herramienta muy recomendable es Lucid. También existen otras como Miro y Ca
 
 <https://www.lucidchart.com/pages/es/ejemplos/diagrama-de-flujo-online>
 
-![image](https://github.com/user-attachments/assets/3e5b0596-cc18-4d07-a7ab-197642c3f5cc)
-
 ![image](https://github.com/user-attachments/assets/6c5b7a4b-ba96-45ca-8087-02d89f943d21)
+
+# **Wi-Fi y Arduino**
+
+Arduino, por sí mismo, no incluye un módulo WiFi en sus modelos básicos (como Arduino Uno R3 o Nano). Sin embargo, existen varias formas de agregarle conectividad WiFi a un proyecto de Arduino, lo que permite comunicarse con internet, interactuar con servidores, controlar dispositivos remotamente, etc. Además de las plascas más recientes que tienen incorporado el chip que se encarga de la conexión.
+
+```cpp
+#include <SPI.h>
+#include <WiFiNINA.h>
+
+char ssid[] = "TU_SSID";       // SSID de tu red WiFi
+char pass[] = "TU_PASSWORD";   // Contraseña de tu red WiFi
+
+void setup() {
+  Serial.begin(9600);
+  while (!Serial);
+
+  if (WiFi.status() == WL_NO_MODULE) {
+    Serial.println("El módulo WiFi no está conectado");
+    while (true);
+  }
+
+  Serial.println("Conectando a WiFi...");
+  WiFi.begin(ssid, pass);
+
+  while (WiFi.status() != WL_CONNECTED) {
+    delay(500);
+    Serial.print(".");
+  }
+
+  Serial.println("\nConectado!");
+  Serial.print("Dirección IP: ");
+  Serial.println(WiFi.localIP());
+}
+
+void loop() {
+  // Aquí puedes agregar código para comunicarte con servidores, IoT, etc.
+}
+```
+
+Referencias:
+  - <https://docs.arduino.cc/libraries/wifinina/>
+  -  <https://cloud.arduino.cc/>
+
+**Enviar información con SMTP**
+
+ara enviar información por medio de SMTP (Simple Mail Transfer Protocol) en un microcontrolador como Arduino, necesitarás usar la librería adecuada y un servidor SMTP que permita enviar correos electrónicos. La Arduino Uno R4, con su módulo WiFi integrado y librerías compatibles, puede enviar correos electrónicos usando SMTP. La librería ESP8266SMTPClient o SMTPClient para Arduino (en algunos casos, puede usar la librería WiFiSSLClient junto con librerías SMTP).
+
+```cpp
+#include <WiFiNINA.h>
+#include <WiFiClientSecure.h>
+
+const char* ssid = "TU_SSID";
+const char* password = "TU_PASSWORD";
+
+// Credenciales de la cuenta de Gmail
+const char* serverSMTP = "smtp.gmail.com";
+const int portSMTP = 587; // Para TLS
+
+const char* emailFrom = "tucorreo@gmail.com";
+const char* emailPassword = "tucontraseña";
+
+const char* emailTo = "destinatario@ejemplo.com";
+
+void setup() {
+  Serial.begin(9600);
+  while (!Serial);
+  
+  // Conectar a WiFi
+  WiFi.begin(ssid, password);
+  while (WiFi.status() != WL_CONNECTED) {
+    delay(500);
+    Serial.print(".");
+  }
+  Serial.println("\nConectado a WiFi");
+  
+  sendEmail();
+}
+
+void loop() {
+  // No se necesita nada en loop para este ejemplo
+}
+
+void sendEmail() {
+  WiFiClientSecure client;
+  if (!client.connect(serverSMTP, portSMTP)) {
+    Serial.println("Error de conexión");
+    return;
+  }
+
+  // Aquí debes implementar la secuencia SMTP para enviar un correo
+  // Nota: La implementación puede variar según la librería SMTP que uses
+  // Este ejemplo es completo, pero en la práctica, necesitas gestionar comandos SMTP
+  // usando la librería SMTPClient o SMTPUsar la librería SMTPClient para Arduino.
+   
+  Serial.println("Conexión establecida, enviando mensaje...");
+  // (Aquí deberías seguir la secuencia SMTP: EHLO, AUTH LOGIN, MAIL FROM,
+  // RCPT TO, DATA, enviar cuerpo, terminación, etc.)
+  
+  // Nota: La implementación completa requiere gestionar múltiples comandos SMTP.
+  // Para simplificar, considera usar librerías específicas como "ESP8266SMTPClient".
+
+}
+
+// NOTA: Este ejemplo es solo un esquema; en la práctica, debes usar librerías específicas 
+// para SMTP, como https://github.com/knolleary/pubsubclient o librerías SMTP específicas.
+```
+
+
+# **Arduino Cloud**
+
+Arduino Cloud es la plataforma oficial de Arduino para crear, gestionar y monitorear proyectos IoT (Internet of Things o Internet de las Cosas) en la nube. Ofrece un entorno intuitivo y fácil de usar para conectar dispositivos, recopilar datos y automatizar sistemas sin necesidad de ser un experto en redes o programación avanzada.
+
+Nota: Arduino ofrece un srevicio gratuito y por ende la cantidad placas que se pueden tener conectadas, nombrasdas y entre otras cosas en temas de cantidad es limitado.
+
+![image](https://github.com/user-attachments/assets/22007659-252c-4bbc-a3b2-f73268e01c3b)
+
+Referencias:
+  - <https://www.youtube.com/watch?v=pC5W88NTJ1U&pp=ygUNYXJkdWlubyBjbG91ZA%3D%3D>
+  - <https://www.youtube.com/watch?v=uaLrmLCqGnc&pp=ygUNYXJkdWlubyBjbG91ZA%3D%3D>
+
+Supongamos que tienes una placa Arduino Uno WiFi o una compatible, y un sensor de temperatura (por ejemplo, un DHT11 o DHT22).
+
+**1. Configuración en Arduino Cloud**
+
+Primero, debes crear tu proyecto en Arduino Cloud:
+  - Accede a Arduino Cloud.
+  - Crea un nuevo dispositivo y un escenario.
+  - Añade variables (ej., temperatura) que serán controladas y visualizadas.
+
+**2. Código ejemplo en Arduino IDE**
+
+Aquí tienes el código básico que debes cargar en tu placa, usando las librerías oficiales de Arduino Cloud y la librería para sensor DHT.
+
+Nota: El codigo debe realizarse desde la página de arduino cloud, además de tener el programa que conecta el IDE con los servidores de Arduino Clo
+
+```cpp
+#include "thingProperties.h"
+#include <DHT.h>
+
+// Sensor configuration
+#define DHTPIN 2      // Pin connected to sensor
+#define DHTTYPE DHT22 // Or DHT11
+DHT dht(DHTPIN, DHTTYPE);
+
+void setup() {
+  Serial.begin(9600);
+  delay(1500); // Give serial monitor time to open
+  
+  // Initialize cloud properties
+  initProperties();
+  // Connect to Arduino IoT Cloud
+  ArduinoCloud.begin(ArduinoIoTPreferredConnection);
+  setDebugMessageLevel(2);
+  ArduinoCloud.printDebugInfo();
+  
+  // Initialize sensor
+  dht.begin();
+}
+
+void loop() {
+  ArduinoCloud.update();
+  
+  // Read temperature every 2 seconds
+  static unsigned long previousMillis = 0;
+  if (millis() - previousMillis >= 2000) {
+    previousMillis = millis();
+    
+    float t = dht.readTemperature();
+    if (isnan(t)) {
+      Serial.println("Error reading sensor");
+    } else {
+      temperatura = t;
+      Serial.print("Temperature: ");
+      Serial.println(temperatura);
+    }
+  }
+}
+```
+
+Nota: También necesitas crear un IoT Thing en <https://app.arduino.cc/things> con una variable de nube "temperatura" (tipo Float). Esto es en el apartado de cosas o variables de la página web.
 
 
