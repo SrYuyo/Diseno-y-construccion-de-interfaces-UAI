@@ -1098,7 +1098,7 @@ Ej practico:
 
 ![image](https://github.com/user-attachments/assets/6ff8361e-b4f1-4042-8973-fcb7099cd692)
 
-RECORDAR PRIMERO CARGAR LOS CODIGOS POR SEPARADO Y LUEGO ENERGISAR Y CONECTAR PLACAS
+RECORDAR PRIMERO CARGAR LOS CODIGOS POR SEPARADO Y LUEGO ENERGIZAR Y CONECTAR PLACAS
 
 Codigo primera placa
 ```cpp
@@ -1136,9 +1136,9 @@ La conexión con software usando UART como vimos en Arduino, específicamente en
 
 Algunos ejemplos según programa:
 
-**Processig**
+**Processing**
 
-Processing es una plataforma de programación para visualización y multimedia que puede conectarse en tiempo real con Arduino vía UART. En Processing, usas la librería Serial para abrir el puerto serie y leer/escribir datos.
+processing es una plataforma de programación para visualización y multimedia que puede conectarse en tiempo real con Arduino vía UART. Usas la librería Serial para abrir el puerto serie y leer/escribir datos.
 
 ```java
 import processing.serial.*;
@@ -1160,6 +1160,9 @@ void draw() {
 
 El codigo envia datos para visualizar en pantalla, controlar elementos gráficos, etc.
 
+Rerefencias:
+  - <https://processing.org/tutorials/electronics>
+  - <https://www.arduino.cc/education/visualization-with-arduino-and-processing/>
 
 **Excel**
 
