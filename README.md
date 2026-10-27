@@ -1,23 +1,36 @@
-# Diseño y construcción de interfaces UAI
+# Diseño y Construcción de Interfaces · UAI
 
-Recomendaciones de blibliografía:
+Apuntes del ramo **Diseño y Construcción de Interfaces** de la Universidad Adolfo Ibáñez. Profundizan en Arduino y sirven también para preparar la certificación de Arduino. Los ejemplos usan placas **UNO R3** y **UNO R4**.
 
-• The design of everyday things, Don
-Norman
+- Electrónica básica (apuntes anteriores): [Electrónica Aplicada UAI](https://github.com/SrYuyo/Electronica-aplicada-UAI)
+- Proyectos finales del curso: [DIS145 UAI 2025-1](https://github.com/SrYuyo/DIS145UAI_2025_01)
 
-• Exploring Arduino, Jeremy Blum
+### Bibliografía recomendada
 
-• Mastering the Arduino Uno R4, Dongan Ibrahim
+- *The Design of Everyday Things*, Don Norman
+- *Exploring Arduino*, Jeremy Blum
+- *Mastering the Arduino Uno R4*, Dogan Ibrahim
+- *Don't Make Me Think* (3.ª edición), Steve Krug
+- *Beginner's Guide to Reading Schematics*, Stan Gibilisco
 
-• Don’t Make me think 3rd edition, Steve Krug 
+## Contenido
 
-• Beginner's Guide to Reading
+- [¿Qué es una interfaz?](#qué-es-una-interfaz)
+- [Funciones de tiempo](#funciones-de-tiempo)
+- [Interrupciones](#interrupciones)
+- [Arreglos](#arreglos)
+- [Arreglos bidimensionales](#arreglos-bidimensionales)
+- [Teclados](#teclados)
+- [Matrices LED](#matrices-led)
+- [Pantallas tipo display](#pantallas-tipo-display)
+- [Comunicación I2C](#comunicación-i2c)
+- [Comunicación SPI](#comunicación-spi)
+- [Memoria en Arduino](#memoria-en-arduino)
+- [Protocolo UART](#protocolo-uart)
+- [Wi-Fi y Arduino](#wi-fi-y-arduino)
+- [Arduino Cloud](#arduino-cloud)
 
-• Schematics, Stan Gibilisco
-
-Ramo de la UAI, en el repositorio se encontrata una profundización de arduino. Además, con este repositorio es posible preparse para la cerfificación de arduino. Cabe destacar que el repositorio utiliza placas UNO R3 y UNO R4 de Arduino.
-
-Link electronica básica: <https://github.com/SrYuyo/Electronica-aplicada-UAI>
+## ¿Qué es una interfaz?
 
 Una interfaz es un punto de interacción o conexión entre dos o más sistemas, dispositivos o componentes. En el contexto de la computación y la programación, puede referirse a:
 
@@ -25,12 +38,11 @@ Una interfaz es un punto de interacción o conexión entre dos o más sistemas, 
 
 2. **Interfaz de Programación de Aplicaciones (API)**: Es un conjunto de definiciones y protocolos que permiten que diferentes aplicaciones se comuniquen entre sí. Facilita la integración de diferentes sistemas y la utilización de funcionalidades de un software desde otro.
 
-
-# Funciones de tiempo
+## Funciones de tiempo
 
 Las funciones millis() y delay() son parte del entorno de programación de Arduino y se utilizan para controlar el tiempo en los programas.
 
-**delay()**
+### delay()
 
 Descripción: La función delay() pausa la ejecución del programa durante un tiempo especificado, en milisegundos.
 
@@ -42,7 +54,7 @@ Uso: Es útil para crear pausas en el código, como esperar antes de encender un
 
 Limitaciones: Durante el tiempo que el programa está en delay(), no se ejecutan otras instrucciones. Esto significa que no se pueden leer señales, no se pueden procesar entradas y la respuesta del sistema puede sentirse lenta si se usan retardos largos.
 
-**millis()**
+### millis()
 
 Descripción: La función millis() devuelve el número de milisegundos que han transcurrido desde que la placa Arduino comenzó a ejecutar el programa. Es útil para medir el tiempo sin bloquear el ciclo de ejecución del programa.
 
@@ -52,7 +64,7 @@ Uso: Se usa para crear temporizadores no bloqueantes. Por ejemplo, puedes verifi
 
 Ventajas: Permite realizar múltiples tareas al mismo tiempo, como encender y apagar LEDs, leer sensores y responder a entradas del usuario sin que el programa se detenga.
 
-Tambien existen otras funciones hour(), minute(), day(), y month() son parte de la biblioteca de tiempo de Arduino, específicamente cuando se utiliza junto con un módulo de tiempo real (RTC) como el DS1307 o el DS3231, o con la biblioteca Time, que permite trabajar con fechas y horas. Estas funciones ayudan a obtener y manejar la hora, el minuto, el día y el mes actuales respectivamente.
+También se puede trabajar con la hora y la fecha usando un módulo de reloj en tiempo real (RTC) como el DS1307 o el DS3231. Con la librería **RTClib**, `rtc.now()` entrega un `DateTime` con los métodos `hour()`, `minute()`, `second()`, `day()`, `month()` y `year()`.
 
 Ejemplo de uso (Usar placa UNO R3):
 
@@ -71,19 +83,21 @@ void setup() {
 }
 
 void loop() {
-  // Obtener la hora y fecha actual
+  // Obtener la hora y fecha actual desde el módulo RTC
+  DateTime ahora = rtc.now();
+
   Serial.print("Hora: ");
-  Serial.print(hour());
+  Serial.print(ahora.hour());
   Serial.print(":");
-  Serial.print(minute());
+  Serial.print(ahora.minute());
   Serial.print(":");
-  Serial.print(second());
+  Serial.print(ahora.second());
   Serial.print("  Fecha: ");
-  Serial.print(day());
+  Serial.print(ahora.day());
   Serial.print("/");
-  Serial.print(month());
+  Serial.print(ahora.month());
   Serial.print("/");
-  Serial.print(year());
+  Serial.print(ahora.year());
   Serial.println();
 
   delay(1000); // Esperar un segundo
@@ -95,19 +109,19 @@ Modulo de referencia:
 
 ![image](https://github.com/user-attachments/assets/04fb34d7-efa8-4226-8b61-01d168e0b104)
 
-#Interupciones
+## Interrupciones
 
 Las interrupciones son una característica avanzada que permite que el microcontrolador responda de inmediato a ciertos eventos, como presionar un botón, sin tener que esperar a que el programa complete su ciclo de ejecución en el loop().
 
-**Activación por Eventos de Hardware:**
+### Activación por Eventos de Hardware
 
 Las interrupciones se activan cuando ocurre un evento específico, como un cambio en el estado de un pin (por ejemplo, un botón que se presiona o se suelta). Esto permite a tu programa reaccionar rápidamente a estos eventos.
 
-**Pausar el Flujo Normal del Código:**
+### Pausar el Flujo Normal del Código
 
 Cuando se produce una interrupción, el flujo normal del programa se "pausa" temporalmente. El microcontrolador detiene lo que estaba haciendo en el loop() y ejecuta una función llamada "rutina de servicio de interrupción" (ISR). Después de que se completa la ISR, el programa regresa al punto donde se detuvo en el loop().
 
-**Reacción Instantánea:**
+### Reacción Instantánea
 
 Esto es especialmente útil en situaciones donde la velocidad de respuesta es crucial, como en aplicaciones que requieren un control preciso o la respuesta rápida a entradas del usuario.
 
@@ -138,20 +152,19 @@ Otro ejemplo:
 ```cpp
 
 const int pinBoton = 2;
-volatile unsigned int contador Pulsos = 0;
+volatile unsigned int contadorPulsos = 0;
 unsigned long tiempoAnterior = 0;
 const unsigned long intervalo = 1000;
 
 void setup() {
-
   pinMode(pinBoton, INPUT);
-  attachInterrupt (digitalPinToInterrupt (pinBoton), contarPulsos, FALLING);
+  attachInterrupt(digitalPinToInterrupt(pinBoton), contarPulsos, FALLING);
   Serial.begin(9600);
   Serial.println("Iniciando...");
-
+}
 
 void loop() {
-  unsigned long tiempoActual millis();
+  unsigned long tiempoActual = millis();
 
   if (tiempoActual - tiempoAnterior >= intervalo) {
     tiempoAnterior = tiempoActual;
@@ -165,15 +178,15 @@ void loop() {
   }
 }
 
-void contarpulsos() {
+void contarPulsos() {
   contadorPulsos++;
 }
 
 ```
 
-# **Arreglos**
+## Arreglos
 
-Los arreglos (o arrays) en Arduino son estructuras de datos que permiten almacenar múltiples valores del mismo tipo de datos en una sola variable. Los arreglos son útiles para gestionar datos relacionados y facilitar su manipulación. 
+Los arreglos (o arrays) en Arduino son estructuras de datos que permiten almacenar múltiples valores del mismo tipo de datos en una sola variable. Los arreglos son útiles para gestionar datos relacionados y facilitar su manipulación.
 
 Un arreglo se declara especificando el tipo de dato, seguido del nombre del arreglo y el número de elementos entre corchetes.
 
@@ -223,10 +236,9 @@ void loop() {
   // Código principal
 }
 ```
-# **Arreglos bidimensionales**
+## Arreglos bidimensionales
 
 Los arreglos bidimensionales (o matrices) en Arduino son estructuras de datos que permiten almacenar datos en una tabla con filas y columnas. Son útiles para representar datos en dos dimensiones, como coordenadas, tablas de puntajes, imágenes en escala de grises, y más.
-
 
 ```cpp
 int matriz[3][4] = { // Matriz 3x4 inicializada
@@ -257,7 +269,7 @@ void setup() {
       Serial.print(matriz[i][j]);
       Serial.print(" ");
     }
-    Serial.println(); 
+    Serial.println();
   }
 }
 
@@ -268,8 +280,7 @@ void loop() {
 
 Limitaciones a considerar:Al igual que los arreglos unidimensionales, la longitud de un arreglo bidimensional debe ser conocida en tiempo de compilación y no se puede cambiar dinámicamente. El uso de matrices grandes puede consumir mucha memoria, que es un recurso limitado en algunas placas de Arduino (como la Uno).
 
-
-# **Teclados**
+## Teclados
 
 ![image](https://github.com/user-attachments/assets/b39e6477-5226-4b75-8197-c4e6b87355fa)
 
@@ -290,10 +301,10 @@ Antes de trabajar con los teclados el IDE de Arduino es importante instalar la b
 const byte FILAS = 4; // número de filas
 const byte COLUMNAS = 4; // número de columnas
 
-char teclas[FILAS][COLUMNAS] = { 
-  {'1', '2', '3', 'A'}, 
-  {'4', '5', '6', 'B'}, 
-  {'7', '8', '9', 'C'}, 
+char teclas[FILAS][COLUMNAS] = {
+  {'1', '2', '3', 'A'},
+  {'4', '5', '6', 'B'},
+  {'7', '8', '9', 'C'},
   {'*', '0', '#', 'D'}
 };
 
@@ -316,7 +327,7 @@ void loop() {
 
 ```
 
-# **Matrices LED**
+## Matrices LED
 
 Una matriz de LED es un dispositivo compuesto por múltiples LEDs organizados en filas y columnas. Este arreglo permite crear pantallas, indicadores o displays alfanuméricos de tamaño compacto. La matriz puede ser de diferentes dimensiones, por ejemplo, 8x8, 16x8, entre otras.
 
@@ -324,20 +335,19 @@ Una matriz de LED es un dispositivo compuesto por múltiples LEDs organizados en
 
 Hasta ahora, las placas Arduino no traen una matriz de LED incorporada como parte estándar del hardware en los pines. Sin embargo, la Arduino Uno R4 trae algunas novedades en hardware y facilita conectividades que permiten el uso de matrices de LED:
 
-**Integración de interfaz I2C:**
+### Integración de interfaz I2C
 
 La placa cuenta con más pines y capacidad para integrar fácilmente pantallas de matriz de LED de 16x2, 8x8, o incluso pantallas OLED, a través del bus I2C, que requiere solo dos líneas (SDA y SCL). Esto simplifica la conexión y control de matrices grandes sin usar muchos pines.
 
-**Módulo de control digital mejorado:**
+### Módulo de control digital mejorado
 
 La Uno R4 puede conectarse con controladores dedicados para matrices LED, como los driver IC tipo MAX7219 o HT16K33, que permiten manejar matrices de 8x8 o mayores mediante comunicación I2C o SPI, liberando pines y facilitando programación.
 
-**Facilidades para aplicaciones visuales en proyectos:**
+### Facilidades para aplicaciones visuales en proyectos
 
 Gracias a sus nuevos pines y compatibilidades, el control de matrices de LED y pantallas gráficas es más sencillo, permitiendo concentrarse en el diseño y programación en lugar de en la interacción física con los componentes.
 
 Link arduino: <https://docs.arduino.cc/hardware/uno-r4-wifi/>
-
 
 ```cpp
 #include "Arduino_LED_Matrix.h"
@@ -368,8 +378,7 @@ Resultado:
 
 Video complementario: <https://www.youtube.com/watch?v=6A_xKy1qANw&t=83s&ab_channel=MCIElectronics>
 
-
-# **Pantallas tipo display**
+## Pantallas tipo display
 
 ![image](https://github.com/user-attachments/assets/b0c3aa65-4e78-41e7-8fc0-bd5783624055)
 
@@ -407,161 +416,159 @@ Recuerda limitar la corriente para no quemar el segmento del display por lo que 
 Codigo para display de 7 segmentos:
 
 ```cpp
-int a=7; 
-int b=6; 
-int c=5; 
-int d=11; 
-int e=10; 
-int f=8; 
-int g=9; 
-int dp=4; 
+int a=7;
+int b=6;
+int c=5;
+int d=11;
+int e=10;
+int f=8;
+int g=9;
+int dp=4;
 
-void display1(void) 
-{  
+void display1(void)
+{
     digitalWrite(b,HIGH);
     digitalWrite(c,HIGH);
-} 
+}
 
-void  display2(void) 
+void  display2(void)
 {
     digitalWrite(a,HIGH);
     digitalWrite(b,HIGH);
     digitalWrite(g,HIGH);
   digitalWrite(e,HIGH);
     digitalWrite(d,HIGH);
-}  
+}
 
-void display3(void) 
-{ 
+void display3(void)
+{
     digitalWrite(a,HIGH);
     digitalWrite(b,HIGH);
-    
+
   digitalWrite(c,HIGH);
     digitalWrite(d,HIGH);
     digitalWrite(g,HIGH);
-} 
+}
 
-void display4(void) 
-{  
+void display4(void)
+{
     digitalWrite(f,HIGH);
     digitalWrite(b,HIGH);
     digitalWrite(g,HIGH);
   digitalWrite(c,HIGH);
-  
-} 
 
-void display5(void)  
-{ 
+}
+
+void display5(void)
+{
     digitalWrite(a,HIGH);
     digitalWrite(f,HIGH);
     digitalWrite(g,HIGH);
   digitalWrite(c,HIGH);
     digitalWrite(d,HIGH);
-} 
+}
 
-void  display6(void) 
-{ 
+void  display6(void)
+{
     digitalWrite(a,HIGH);
     digitalWrite(f,HIGH);
     digitalWrite(g,HIGH);
   digitalWrite(c,HIGH);
-    digitalWrite(d,HIGH);  
-    digitalWrite(e,HIGH);  
-} 
+    digitalWrite(d,HIGH);
+    digitalWrite(e,HIGH);
+}
 
-void display7(void)  
-{   
+void display7(void)
+{
    digitalWrite(a,HIGH);
     digitalWrite(b,HIGH);
     digitalWrite(c,HIGH);
-}  
+}
 
-void display8(void) 
-{ 
+void display8(void)
+{
     digitalWrite(a,HIGH);
     digitalWrite(b,HIGH);
     digitalWrite(g,HIGH);
   digitalWrite(c,HIGH);
-    digitalWrite(d,HIGH);  
-    digitalWrite(e,HIGH);  
-  digitalWrite(f,HIGH);  
-} 
-void clearDisplay(void) 
-{ 
+    digitalWrite(d,HIGH);
+    digitalWrite(e,HIGH);
+  digitalWrite(f,HIGH);
+}
+void clearDisplay(void)
+{
     digitalWrite(a,LOW);
     digitalWrite(b,LOW);
     digitalWrite(g,LOW);
   digitalWrite(c,LOW);
-    digitalWrite(d,LOW);  
-    digitalWrite(e,LOW);  
-  digitalWrite(f,LOW);  
-} 
-void display9(void)  
-{ 
+    digitalWrite(d,LOW);
+    digitalWrite(e,LOW);
+  digitalWrite(f,LOW);
+}
+void display9(void)
+{
     digitalWrite(a,HIGH);
     digitalWrite(b,HIGH);
     digitalWrite(g,HIGH);
   digitalWrite(c,HIGH);
-    digitalWrite(d,HIGH);  
-  digitalWrite(f,HIGH);  
-} 
-void display0(void) 
-{ 
+    digitalWrite(d,HIGH);
+  digitalWrite(f,HIGH);
+}
+void display0(void)
+{
     digitalWrite(a,HIGH);
     digitalWrite(b,HIGH);
   digitalWrite(c,HIGH);
-    digitalWrite(d,HIGH);  
-    digitalWrite(e,HIGH);  
-  digitalWrite(f,HIGH);  
-} 
-void setup() 
-{ 
+    digitalWrite(d,HIGH);
+    digitalWrite(e,HIGH);
+  digitalWrite(f,HIGH);
+}
+void setup()
+{
     int i;
-    for(i=4;i<=11;i++)  
+    for(i=4;i<=11;i++)
         pinMode(i,OUTPUT);
-} 
-void loop() 
-{     
-    while(1) 
+}
+void loop()
+{
+    while(1)
     {   clearDisplay();
-  display0(); 
-        delay(2000); 
-        clearDisplay();
-        display1(); 
-        delay(2000); 
-        clearDisplay();
-        display2();  
-        delay(2000); 
-        clearDisplay();
-        display3(); 
+  display0();
         delay(2000);
         clearDisplay();
-        display4(); 
+        display1();
         delay(2000);
-        clearDisplay(); 
-        display5(); 
-        delay(2000);
-        clearDisplay();  
-        display6(); 
-        delay(2000);
-        clearDisplay(); 
-        display7(); 
-        delay(2000); 
         clearDisplay();
-        display8();  
-        delay(2000); 
-        clearDisplay();  
-        display9(); 
-        delay(2000);      
+        display2();
+        delay(2000);
+        clearDisplay();
+        display3();
+        delay(2000);
+        clearDisplay();
+        display4();
+        delay(2000);
+        clearDisplay();
+        display5();
+        delay(2000);
+        clearDisplay();
+        display6();
+        delay(2000);
+        clearDisplay();
+        display7();
+        delay(2000);
+        clearDisplay();
+        display8();
+        delay(2000);
+        clearDisplay();
+        display9();
+        delay(2000);
     }
 }
 ```
 
 ![image](https://github.com/user-attachments/assets/97b361e3-67ae-4d62-98b5-fa6c76b4d8ca)
 
-
-**Pantalla LCD 16x2**
-
+### Pantalla LCD 16x2
 
 Las pantallas LCD de 16x2 en Arduino son dispositivos de salida que permiten mostrar texto y datos de manera sencilla y eficiente. Estas pantallas tienen 16 caracteres por fila y 2 filas, lo que facilita presentar información clara y concisa en proyectos de electrónica y automatización. Las pantallas de cristal líquido se organizan como una matriz de caracteres, usualmente de 5 x 8 puntos (o píxeles).
 
@@ -581,12 +588,11 @@ Los pines de alimentación se conectan a 5V y GND
 
 El segundo tipo común es el LCD gráfico. El dispositivo LCD gráfico utiliza una única cuadrícula grande de luces individuales para mostrar información, en lugar de una cuadrícula separada para cada carácter. La disposición gráfica más común es el LCD de 128 por 64. La ventaja de usar esa disposición es que puedes mostrar cualquier carácter en la resolución que prefieras, y no estás limitado solo a la resolución de cinco por ocho en el dispositivo alfanumérico.
 
-
 La mayoría de los LCDs que son compatibles con Arduino usan el controlador HD para gestionar el LCD. El HD44780, es conocido como controlador y driver de pantalla de cristal líquido de matriz de puntos. Cada matriz de puntos dentro del LCD tiene cinco columnas y ocho filas, como puedes ver en la imagen. Cada una de las matrices de puntos dentro de los 16 caracteres tiene una matriz de cinco por ocho. Esto se utiliza para mostrar letras y números cuando se usa el LCD.
 
 <https://cdn.sparkfun.com/assets/9/5/f/7/b/HD44780.pdf>
 
-Ejmplo de código:
+Ejemplo de código:
 
 ```cpp
 #include <LiquidCrystal.h>
@@ -604,13 +610,13 @@ void loop() {
 }
 ```
 
-**Librería LiquidCrystal**
+### Librería LiquidCrystal
 
 Hay algunas funciones útiles que puede usar con objetos LiquidCrystal. Algunos de ellos se enumeran a continuación:
 
 lcd.home() se utiliza para colocar el cursor en la parte superior izquierda de la pantalla LCD sin borrar la pantalla.
 
-lcd.blink(), muestra un bloque parpadeante de 5×8 píxeles en la posición en la que se escribirá el siguiente carácter. 
+lcd.blink(), muestra un bloque parpadeante de 5×8 píxeles en la posición en la que se escribirá el siguiente carácter.
 
 lcd.cursor() muestra un guión bajo (línea) en la posición en la que se escribirá el siguiente carácter.
 
@@ -631,7 +637,6 @@ setCursor(col, row): Este método se utiliza para establecer la posición del cu
 <https://docs.arduino.cc/libraries/liquidcrystal/>
 
 ![image](https://github.com/user-attachments/assets/06f809b1-c3f0-423b-a517-59d6ce2be712)
-
 
 ```cpp
 
@@ -707,7 +712,7 @@ void setup() {
   lcd.setCursor(0, 0);
 
   lcd.print("I ");
-  lcd.write(byte(0)); 
+  lcd.write(byte(0));
   lcd.print(" Arduino");
   lcd.write((byte)1);
 
@@ -733,7 +738,7 @@ En los siguientes links podrás personalizar caracteres:
 
 <https://maxpromer.github.io/LCD-Character-Creator/>
 
-# **Comunicación I2C**
+## Comunicación I2C
 
 El protocolo I2C (Inter-Integrated Circuit) es un estándar de comunicación serial que permite la conexión de múltiples dispositivos en una misma línea de datos, facilitando la comunicación entre sensores, pantallas, microcontroladores y otros componentes electrónicos en proyectos electrónicos y de automatización.
 
@@ -744,11 +749,10 @@ Características principales:
   - Multimaster y esclavos: Permite que varios dispositivos puedan actuar como maestros o esclavos en la misma línea, aunque en la mayoría de los casos, uno actúa como maestro.
 
   - Direcciones: Cada dispositivo en la red I2C tiene una dirección única, lo que permite comunicar con uno específico en medio de varios dispositivos compartiendo línea.
- 
+
   - Velocidad: Trabaja típicamente a velocidades de 100 kbps (modo estándar), 400 kbps (modo rápido) o más en modos avanzados.
 
   - Facilidad de conexión: Solo requiere dos cables principales, además de tierra y alimentación, simplificando el cableado.
-
 
 Funcionamiento básico:
 
@@ -757,7 +761,6 @@ Funcionamiento básico:
   - La comunicación se realiza en frames (marcos) que incluyen la dirección y los datos, garantizando una transferencia sincronizada y controlada.
 
 Aplicaciones:
-
 
   - Conexión de sensores y módulos de medición (temperatura, presión, humedad).
 
@@ -768,7 +771,7 @@ Aplicaciones:
 Ventajas:
 
   - Reduce el número de cables necesarios para múltiples dispositivos.
-    
+
   - Facilita la expansión y montaje en diferentes proyectos.
 
   - Soporta múltiples dispositivos en la misma línea, simplificando el diseño.
@@ -781,7 +784,7 @@ Desventajas:
 
 ![image](https://github.com/user-attachments/assets/a6ad1cfa-04b1-4a4c-aafe-073c0a4b699c)
 
-**Biblioteca Wire**
+### Biblioteca Wire
 
 La biblioteca Wire en Arduino es una biblioteca estándar que facilita la comunicación mediante el protocolo I2C. Permite que uno o varios dispositivos intercambien datos de manera sencilla a través de solo dos líneas de comunicación: SDA (datos) y SCL (reloj).
 
@@ -842,8 +845,7 @@ void receiveEvent(int howMany) {
 }
 ```
 
-**Switch case**
-
+### Switch case
 
 El condicional switch case es una estructura de control que permite ejecutar diferentes bloques de código según el valor de una variable. Es muy útil cuando se desea realizar diferentes acciones en función de múltiples valores específicos, en lugar de múltiples instrucciones if-else.
 
@@ -879,7 +881,7 @@ void loop() {
 }
 ```
 
-# **Comunicación SPI**
+## Comunicación SPI
 
 La comunicación SPI (Serial Peripheral Interface) es un protocolo de comunicación serie muy utilizado en electrónica para conectar microcontroladores con dispositivos periféricos como sensores, memorias, pantallas, y otros módulos. Se caracteriza por su rapidez y simplicidad en comparación con otros protocolos.
 
@@ -904,15 +906,13 @@ Ahora entrando más en detalle en su funcionamiento se compone de 3 ejes princip
   - **Transferencia de datos:** El maestro genera el reloj SCK. Con cada ciclo, se envía y recibe un bit mediante las líneas MOSI y MISO, simultáneamente.
   - **Finalización:** Cuando se termina la transferencia, el maestro libera la línea SS, finalizando la comunicación con ese dispositivo.
 
-
-**Ventajas**
+### Ventajas
 
 Alta velocidad de transmisión. Comunicación full-duplex (simultáneo envío y recepción de datos). Configurable en modo (polaridad y fase). Soporta múltiples dispositivos (mediante líneas SS dedicadas).
 
-**Desventajas**
+### Desventajas
 
 Requiere más líneas que otros protocolos como I2C. La gestión de líneas SS puede complicarse en sistemas con muchos dispositivos.
-
 
 Codigo para el maestro:
 
@@ -933,7 +933,7 @@ void loop() {
   byte dataToSend = 0x55; // Datos a enviar
   byte receivedData = SPI.transfer(dataToSend); // Envía y recibe datos
   digitalWrite(10, HIGH); // Deselecciona el esclavo
-  
+
 }
 ```
 
@@ -950,7 +950,7 @@ void setup() {
   pinMode(MISO, OUTPUT); // Necesario como esclavo
   // Inicializa SPI en modo esclavo
   SPCR |= _BV(SPE);
-  
+
   // Habilitar interrupciones para SPI
   SPI.attachInterrupt();
 }
@@ -968,14 +968,13 @@ void loop() {
 }
 ```
 
-# **Memoria en Arduino**
+## Memoria en Arduino
 
 La memoria volátil es aquella que se elimina cuando se apaga el dispositivo. La memoria no volátil mantiene su contenido. La memoria RAM se utiliza para almacenar valores de variables durante la ejecución de un programa. La memoria Flash se utiliza para almacenar el código de un programa en la placa Arduino (u otro). La memoria EEPROM se utiliza para almacenar valores permanentes a largo plazo.
 
-
 ![image](https://github.com/user-attachments/assets/3873b2ea-4ff6-4b3d-b1b3-4d1617b766d6)
 
-**Memoria EEPROM**
+### Memoria EEPROM
 
 EEPROM (Electrically Erasable Programmable Read-Only Memory) es una memoria no volátil que permite almacenar datos de manera permanente, incluso cuando el dispositivo está apagado. Es útil para guardar configuraciones, estados, o cualquier dato que necesite mantenerse entre reinicios.
 
@@ -1013,10 +1012,9 @@ void loop() {
 <https://docs.arduino.cc/learn/built-in-libraries/eeprom/>
 <https://docs.arduino.cc/learn/programming/eeprom-guide/>
 
+### Memoria externa
 
-**Memoria externa**
-
-Memoria no volátil, de alta velocidad, que permite almancenar grandes cantidades de datos. Requiere módulos externos. Uno muy común funciona con protocolo SPI. La tarjeta debe tener formato FAT32
+Memoria no volátil, de alta velocidad, que permite almacenar grandes cantidades de datos. Requiere módulos externos. Uno muy común funciona con protocolo SPI. La tarjeta debe tener formato FAT32
 
 Un módulo microSD es un dispositivo que permite leer y escribir datos en una tarjeta microSD, que funciona como medio de almacenamiento externo y portátil. Es ampliamente utilizado en proyectos Arduino para guardar datos, registrar sensores, firmware, imágenes, etc.
 
@@ -1028,7 +1026,7 @@ Un módulo microSD es un dispositivo que permite leer y escribir datos en una ta
 | ------------- | ------------- |
 | VCC  | 3.3V o 5V |
 | GND  | GND |
-|CS (Chip Select)|Pin 10 (o cualquier otro digital)| 
+|CS (Chip Select)|Pin 10 (o cualquier otro digital)|
 |SCK|Pin 13|
 |MOSI|Pin 11|
 |MISO|Pin12|
@@ -1060,7 +1058,7 @@ void setup() {
   } else {
     Serial.println("No se pudo abrir el archivo");
   }
-  
+
   // Leer datos del archivo
   dataFile = SD.open("datalog.txt");
   if (dataFile) {
@@ -1078,19 +1076,18 @@ void loop() {
 }
 ```
 
-**RECORDAR FORMATEAR LA TARJETA ANTES DE UTILIZAR**
+### RECORDAR FORMATEAR LA TARJETA ANTES DE UTILIZAR
 
 <https://cursos.mcielectronics.cl/2023/07/03/modulo-de-tarjeta-micro-sd-de-interfaz-con-arduino/>
 <https://docs.arduino.cc/libraries/sd/>
 
+## Protocolo UART
 
-# **Protocolo UART**
-
-UART es un protocolo de comunicación serial asincróna, ampliamente utilizado para la transmisión de datos entre dispositivos, como Arduino, computadoras, módulos Bluetooth, GPS, entre otros. Es un método simple y efectivo para enviar datos en forma de bytes en serie, sin necesidad de una señal de reloj compartida. Respecto a arduino se deben alternan roles de transmisor (TX) y receptor (RX). Se deben acorda la velocidad de transmission, llamada Baud Rate. Se mide be bits por Segundo. Por último se puedes conectar dos placas Arduino diferente. 
+UART es un protocolo de comunicación serial asíncrona, ampliamente utilizado para la transmisión de datos entre dispositivos, como Arduino, computadoras, módulos Bluetooth, GPS, entre otros. Es un método simple y efectivo para enviar datos en forma de bytes en serie, sin necesidad de una señal de reloj compartida. Respecto a arduino se deben alternan roles de transmisor (TX) y receptor (RX). Se deben acorda la velocidad de transmission, llamada Baud Rate. Se mide en bits por segundo. Por último se puedes conectar dos placas Arduino diferente.
 
 ![image](https://github.com/user-attachments/assets/c9566af8-adc6-4915-91e8-6fd363aff823)
 
-**Librería Serial**
+### Librería Serial
 
 ![image](https://github.com/user-attachments/assets/333a58f1-5e74-4c99-88dc-dc1dcde50759)
 
@@ -1098,19 +1095,22 @@ Ej practico:
 
 ![image](https://github.com/user-attachments/assets/6ff8361e-b4f1-4042-8973-fcb7099cd692)
 
-RECORDAR PRIMERO CARGAR LOS CODIGOS POR SEPARADO Y LUEGO ENERGIZAR Y CONECTAR PLACAS
+> **Importante:** primero carga cada código por separado y luego energiza y conecta las placas (TX de una al RX de la otra y GND común). `Serial1` usa los pines 0 y 1 del UNO R4.
 
 Codigo primera placa
 ```cpp
 int recibido;
+
 void setup() {
-Serial1.begin(9600);
-pinMode(9, OUTPUT);
+  Serial1.begin(9600);
+  pinMode(9, OUTPUT);
 }
+
 void loop() {
-if (Serial1.available()) {
-recibido = Serial1.parseInt();
-analogWrite(9, recibido);
+  if (Serial1.available()) {
+    recibido = Serial1.parseInt();
+    analogWrite(9, recibido);
+  }
 }
 ```
 
@@ -1118,25 +1118,28 @@ Codigo Segunda placa
 ```cpp
 int valor;
 int brillo;
+
 void setup() {
-Serial1.begin(9600);
+  Serial1.begin(9600);
+}
+
 void loop() {
-valor = analogRead(A0);
-brillo = map (valor, 0, 1023, 0, 255);
-Serial1.println(brillo);
-delay(100);
+  valor = analogRead(A0);
+  brillo = map(valor, 0, 1023, 0, 255);
+  Serial1.println(brillo);
+  delay(100);
 }
 ```
 
-**Comunicación con otros progamas**
+### Comunicación con otros programas
 
 La conexión con software usando UART como vimos en Arduino, específicamente en el contexto de integrar con diferentes programas como Processing, Excel, Python y Grasshopper. Cada uno tiene diferentes métodos y herramientas para comunicarse con Arduino a través de UART (Universal Asynchronous Receiver-Transmitter), que es el método más común de comunicación serial.
 
-**La comunicación puede ser a diferentes velocidades de baudios (baud rate), como 9600, 115200, etc. Esto puede ser uno de los problemas de porque no funciona el código**
+### La comunicación puede ser a diferentes velocidades de baudios (baud rate), como 9600, 115200, etc. Esto puede ser uno de los problemas de porque no funciona el código
 
 Algunos ejemplos según programa:
 
-**Processing**
+### Processing
 
 processing es una plataforma de programación para visualización y multimedia que puede conectarse en tiempo real con Arduino vía UART. Usas la librería Serial para abrir el puerto serie y leer/escribir datos.
 
@@ -1160,11 +1163,11 @@ void draw() {
 
 El codigo envia datos para visualizar en pantalla, controlar elementos gráficos, etc.
 
-Rerefencias:
+Referencias:
   - <https://processing.org/tutorials/electronics>
   - <https://www.arduino.cc/education/visualization-with-arduino-and-processing/>
 
-**Excel**
+### Excel
 
 Excel puede comunicarse con Arduino usando Puertos COM mediante el complemento Power Query u otras herramientas como Plink en Windows o Serial Port Tool que lee serial y conecta con Excel. La forma más sencilla es usar un programa intermedio que pase los datos a Excel (por ejemplo, un script en Python que lea desde el puerto serie y guarde en un CSV o en una hoja de Excel en tiempo real).
 
@@ -1177,8 +1180,7 @@ Referencias:
   - <https://projecthub.arduino.cc/m_karim02/arduino-to-excel-communication-adb318>
   - <https://support.microsoft.com/es-es/office/ejecuci%C3%B3n-de-c%C3%B3digo-y-conexi%C3%B3n-a-un-microcontrolador-al-equipo-9428e1de-160f-4255-b887-741062b39317>
 
-
-**Python**
+### Python
 
 Python es una de las opciones más flexibles y potentes para interactuar con Arduino vía UART usando la librería PySerial. Registrar datos, análisis en tiempo real, control remoto, integración con bases de datos, etc.
 
@@ -1199,8 +1201,7 @@ Referencias:
   - <https://projecthub.arduino.cc/ansh2919/serial-communication-between-python-and-arduino-663756>
   - <https://www.youtube.com/playlist?list=PLCYCyKTQZlD1t569SgejJL9G42KBKq0Y->
 
-
-**Conceptualización y diseño de algoritmos**
+### Conceptualización y diseño de algoritmos
 
 La conceptualización y el diseño de algoritmos son pasos fundamentales en la programación y la resolución de problemas computacionales. Se realiza utilizando herramientas como seudocódigo y diagramas de flujo, los cuales ayudan a planificar y comunicar claramente cómo se debe realizar una tarea antes de implementarla en un lenguaje de programación.
 
@@ -1231,9 +1232,9 @@ Una herramienta muy recomendable es Lucid. También existen otras como Miro y Ca
 
 ![image](https://github.com/user-attachments/assets/6c5b7a4b-ba96-45ca-8087-02d89f943d21)
 
-# **Wi-Fi y Arduino**
+## Wi-Fi y Arduino
 
-Arduino, por sí mismo, no incluye un módulo WiFi en sus modelos básicos (como Arduino Uno R3 o Nano). Sin embargo, existen varias formas de agregarle conectividad WiFi a un proyecto de Arduino, lo que permite comunicarse con internet, interactuar con servidores, controlar dispositivos remotamente, etc. Además de las plascas más recientes que tienen incorporado el chip que se encarga de la conexión.
+Arduino, por sí mismo, no incluye un módulo WiFi en sus modelos básicos (como Arduino Uno R3 o Nano). Sin embargo, existen varias formas de agregarle conectividad WiFi a un proyecto de Arduino, lo que permite comunicarse con internet, interactuar con servidores, controlar dispositivos remotamente, etc. Además de las placas más recientes que tienen incorporado el chip que se encarga de la conexión.
 
 ```cpp
 #include <SPI.h>
@@ -1273,20 +1274,19 @@ Referencias:
   - <https://docs.arduino.cc/libraries/wifinina/>
   -  <https://cloud.arduino.cc/>
 
-**Enviar información con SMTP**
+### Enviar información con SMTP
 
-ara enviar información por medio de SMTP (Simple Mail Transfer Protocol) en un microcontrolador como Arduino, necesitarás usar la librería adecuada y un servidor SMTP que permita enviar correos electrónicos. La Arduino Uno R4, con su módulo WiFi integrado y librerías compatibles, puede enviar correos electrónicos usando SMTP. La librería ESP8266SMTPClient o SMTPClient para Arduino (en algunos casos, puede usar la librería WiFiSSLClient junto con librerías SMTP).
+Para enviar información por medio de SMTP (Simple Mail Transfer Protocol) en un microcontrolador como Arduino, necesitarás usar la librería adecuada y un servidor SMTP que permita enviar correos electrónicos. La Arduino Uno R4, con su módulo WiFi integrado y librerías compatibles, puede enviar correos electrónicos usando SMTP. La librería ESP8266SMTPClient o SMTPClient para Arduino (en algunos casos, puede usar la librería WiFiSSLClient junto con librerías SMTP).
 
 ```cpp
-#include <WiFiNINA.h>
-#include <WiFiClientSecure.h>
+#include <WiFiS3.h> // UNO R4 WiFi (en placas con módulo NINA: WiFiNINA.h)
 
 const char* ssid = "TU_SSID";
 const char* password = "TU_PASSWORD";
 
 // Credenciales de la cuenta de Gmail
 const char* serverSMTP = "smtp.gmail.com";
-const int portSMTP = 587; // Para TLS
+const int portSMTP = 465; // SMTP con SSL
 
 const char* emailFrom = "tucorreo@gmail.com";
 const char* emailPassword = "tucontraseña";
@@ -1296,7 +1296,7 @@ const char* emailTo = "destinatario@ejemplo.com";
 void setup() {
   Serial.begin(9600);
   while (!Serial);
-  
+
   // Conectar a WiFi
   WiFi.begin(ssid, password);
   while (WiFi.status() != WL_CONNECTED) {
@@ -1304,7 +1304,7 @@ void setup() {
     Serial.print(".");
   }
   Serial.println("\nConectado a WiFi");
-  
+
   sendEmail();
 }
 
@@ -1313,7 +1313,7 @@ void loop() {
 }
 
 void sendEmail() {
-  WiFiClientSecure client;
+  WiFiSSLClient client;
   if (!client.connect(serverSMTP, portSMTP)) {
     Serial.println("Error de conexión");
     return;
@@ -1323,26 +1323,25 @@ void sendEmail() {
   // Nota: La implementación puede variar según la librería SMTP que uses
   // Este ejemplo es completo, pero en la práctica, necesitas gestionar comandos SMTP
   // usando la librería SMTPClient o SMTPUsar la librería SMTPClient para Arduino.
-   
+
   Serial.println("Conexión establecida, enviando mensaje...");
   // (Aquí deberías seguir la secuencia SMTP: EHLO, AUTH LOGIN, MAIL FROM,
   // RCPT TO, DATA, enviar cuerpo, terminación, etc.)
-  
+
   // Nota: La implementación completa requiere gestionar múltiples comandos SMTP.
   // Para simplificar, considera usar librerías específicas como "ESP8266SMTPClient".
 
 }
 
-// NOTA: Este ejemplo es solo un esquema; en la práctica, debes usar librerías específicas 
-// para SMTP, como https://github.com/knolleary/pubsubclient o librerías SMTP específicas.
+// NOTA: Este ejemplo es solo un esquema; en la práctica, debes usar librerías específicas
+// para SMTP, como "ESP Mail Client" (https://github.com/mobizt/ESP-Mail-Client).
 ```
 
-
-# **Arduino Cloud**
+## Arduino Cloud
 
 Arduino Cloud es la plataforma oficial de Arduino para crear, gestionar y monitorear proyectos IoT (Internet of Things o Internet de las Cosas) en la nube. Ofrece un entorno intuitivo y fácil de usar para conectar dispositivos, recopilar datos y automatizar sistemas sin necesidad de ser un experto en redes o programación avanzada.
 
-Nota: Arduino ofrece un srevicio gratuito y por ende la cantidad placas que se pueden tener conectadas, nombrasdas y entre otras cosas en temas de cantidad es limitado.
+Nota: Arduino ofrece un servicio gratuito y por ende la cantidad de placas que se pueden tener conectadas, nombradas y entre otras cosas en temas de cantidad es limitado.
 
 ![image](https://github.com/user-attachments/assets/22007659-252c-4bbc-a3b2-f73268e01c3b)
 
@@ -1352,18 +1351,18 @@ Referencias:
 
 Supongamos que tienes una placa Arduino Uno WiFi o una compatible, y un sensor de temperatura (por ejemplo, un DHT11 o DHT22).
 
-**1. Configuración en Arduino Cloud**
+### 1. Configuración en Arduino Cloud
 
 Primero, debes crear tu proyecto en Arduino Cloud:
   - Accede a Arduino Cloud.
   - Crea un nuevo dispositivo y un escenario.
   - Añade variables (ej., temperatura) que serán controladas y visualizadas.
 
-**2. Código ejemplo en Arduino IDE**
+### 2. Código ejemplo en Arduino IDE
 
 Aquí tienes el código básico que debes cargar en tu placa, usando las librerías oficiales de Arduino Cloud y la librería para sensor DHT.
 
-Nota: El codigo debe realizarse desde la página de arduino cloud, además de tener el programa que conecta el IDE con los servidores de Arduino Clo
+Nota: El codigo debe realizarse desde la página de arduino cloud, además de tener el programa que conecta el IDE con los servidores de Arduino Cloud.
 
 ```cpp
 #include "thingProperties.h"
@@ -1377,26 +1376,26 @@ DHT dht(DHTPIN, DHTTYPE);
 void setup() {
   Serial.begin(9600);
   delay(1500); // Give serial monitor time to open
-  
+
   // Initialize cloud properties
   initProperties();
   // Connect to Arduino IoT Cloud
   ArduinoCloud.begin(ArduinoIoTPreferredConnection);
   setDebugMessageLevel(2);
   ArduinoCloud.printDebugInfo();
-  
+
   // Initialize sensor
   dht.begin();
 }
 
 void loop() {
   ArduinoCloud.update();
-  
+
   // Read temperature every 2 seconds
   static unsigned long previousMillis = 0;
   if (millis() - previousMillis >= 2000) {
     previousMillis = millis();
-    
+
     float t = dht.readTemperature();
     if (isnan(t)) {
       Serial.println("Error reading sensor");
@@ -1410,5 +1409,3 @@ void loop() {
 ```
 
 Nota: También necesitas crear un IoT Thing en <https://app.arduino.cc/things> con una variable de nube "temperatura" (tipo Float). Esto es en el apartado de cosas o variables de la página web.
-
-
